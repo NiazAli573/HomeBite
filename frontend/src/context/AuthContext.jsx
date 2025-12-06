@@ -51,9 +51,17 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const response = await authService.login(username, password);
-      await checkAuth();
+      // After successful login, update user state
+      // Login API returns {message: "Login successful", user: {...}}
+      if (response?.user) {
+        setUser(response.user);
+      } else {
+        // If user not in response, check auth status
+        await checkAuth();
+      }
       return response;
     } catch (error) {
+      console.error('Login error in AuthContext:', error);
       throw error;
     }
   };
@@ -71,9 +79,17 @@ export const AuthProvider = ({ children }) => {
   const signupCustomer = async (data) => {
     try {
       const response = await authService.signupCustomer(data);
-      await checkAuth();
+      // After successful signup, user is automatically logged in by backend
+      // Signup API returns {message: "Signup successful", user: {...}}
+      if (response?.user) {
+        setUser(response.user);
+      } else {
+        // If user not in response, check auth status
+        await checkAuth();
+      }
       return response;
     } catch (error) {
+      console.error('Signup error in AuthContext:', error);
       throw error;
     }
   };

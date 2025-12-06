@@ -54,10 +54,27 @@ const CustomerSignup = () => {
     setLoading(true);
 
     try {
-      await signupCustomer(formData);
-      navigate('/meals');
+      // Map phone_number to phone for API
+      const signupData = {
+        ...formData,
+        phone: formData.phone_number,
+      };
+      delete signupData.phone_number;
+      
+      const response = await signupCustomer(signupData);
+      
+      // After successful signup, user is automatically logged in
+      // Redirect based on user role
+      if (response?.user?.role === 'customer') {
+        navigate('/customer/dashboard');
+      } else {
+        navigate('/meals');
+      }
     } catch (err) {
-      setError(err.response?.data?.error || 'Signup failed. Please try again.');
+      console.error('Signup error:', err);
+      const errorMessage = err.response?.data?.error || 
+                          (err.response?.data ? JSON.stringify(err.response.data) : 'Signup failed. Please try again.');
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

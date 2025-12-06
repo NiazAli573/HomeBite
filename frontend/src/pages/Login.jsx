@@ -19,8 +19,10 @@ const Login = () => {
 
     try {
       const response = await login(username, password);
-      // Get the user role and redirect to appropriate dashboard
-      const userRole = response?.user?.role || location.state?.userRole;
+      console.log('Login response:', response);
+      
+      // Get the user role from response or from context
+      const userRole = response?.user?.role;
       
       if (userRole === 'cook') {
         navigate('/dashboard', { replace: true });
@@ -30,7 +32,10 @@ const Login = () => {
         navigate('/', { replace: true });
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Invalid username or password');
+      console.error('Login error:', err);
+      const errorMessage = err.response?.data?.error || 
+                          (err.response?.data ? JSON.stringify(err.response.data) : 'Invalid username or password');
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
