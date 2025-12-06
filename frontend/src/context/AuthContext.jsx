@@ -51,7 +51,15 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const response = await authService.login(username, password);
-      // After successful login, update user state
+      // After successful login, fetch CSRF token
+      try {
+        await authService.getCsrfToken();
+        console.log('CSRF token refreshed after login');
+      } catch (error) {
+        console.warn('Failed to refresh CSRF token:', error);
+      }
+      
+      // Update user state
       // Login API returns {message: "Login successful", user: {...}}
       if (response?.user) {
         setUser(response.user);
