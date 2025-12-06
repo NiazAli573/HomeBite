@@ -22,7 +22,9 @@ This now includes:
 ### 2. CORS Configuration
 **Problem:** Frontend couldn't make cross-origin requests to backend
 **Fix Applied:**
+- Added `CORS_ALLOWED_ORIGIN_REGEXES` to support all Vercel domains (production, preview, branch deployments)
 - Added wildcard Railway domains to CSRF_TRUSTED_ORIGINS
+- Added `https://*.vercel.app` to CSRF_TRUSTED_ORIGINS for all Vercel deployments
 - Added CORS_ALLOW_HEADERS for proper header validation
 - Added support for ADDITIONAL_CORS_ORIGINS environment variable
 
@@ -36,8 +38,14 @@ VITE_API_URL=https://web-production-ef53f.up.railway.app/api
 ### Backend (settings.py)
 ```python
 # ALLOWED_HOSTS: Accepts requests from any vercel.app or railway.app domain
-# CORS: Allows requests from localhost:5173, localhost:3000, and Vercel domain
-# CSRF: Trusts Vercel domain and Railway wildcard domains
+# CORS: 
+#   - Allows requests from localhost:5173, localhost:3000 (development)
+#   - Uses CORS_ALLOWED_ORIGIN_REGEXES to support ALL *.vercel.app domains
+#   - Supports production, preview, and branch deployments automatically
+# CSRF: 
+#   - Trusts all Vercel domains (*.vercel.app)
+#   - Trusts all Railway domains (*.railway.app, *.up.railway.app)
+#   - Trusts localhost for development
 ```
 
 ## How to Verify It's Working
@@ -128,16 +136,27 @@ python manage.py runserver
 |-------|----------|
 | 502 Bad Gateway | Railway service crashed - check logs |
 | 400 Bad Request | ALLOWED_HOSTS mismatch - verify domain |
-| CORS error | Frontend domain not in CORS_ALLOWED_ORIGINS |
+| CORS error | CORS now supports all Vercel domains. If error persists, check Railway backend is running and has latest code |
 | Database error | PostgreSQL not running or URL invalid |
 | "Signup failed" | Check browser console for actual error message |
+| Frontend requests to localhost | `VITE_API_URL` not set in Vercel - see [FRONTEND_BACKEND_SETUP.md](FRONTEND_BACKEND_SETUP.md) |
 
 ## Next Steps
 
-1. **Wait 2-3 minutes** for Railway to rebuild and deploy
-2. **Refresh your Vercel frontend** (hard refresh: Ctrl+Shift+R)
-3. **Try signup again**
-4. If still failing, **share the browser console error** with me
+1. **Configure Vercel Environment Variable:**
+   - See [FRONTEND_BACKEND_SETUP.md](FRONTEND_BACKEND_SETUP.md) for detailed instructions
+   - Set `VITE_API_URL` in Vercel to point to your Railway backend
+   - Format: `https://YOUR-RAILWAY-DOMAIN.up.railway.app/api`
+
+2. **Wait 2-3 minutes** for Railway to rebuild and deploy (if you updated backend code)
+
+3. **Redeploy Vercel frontend** after setting environment variable
+
+4. **Refresh your Vercel frontend** (hard refresh: Ctrl+Shift+R)
+
+5. **Try signup again**
+
+6. If still failing, **share the browser console error** with me
 
 ---
 

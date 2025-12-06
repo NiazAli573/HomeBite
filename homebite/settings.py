@@ -157,12 +157,17 @@ REST_FRAMEWORK = {
 
 # CORS settings
 # Allow requests from frontend applications
+# Support all Vercel deployments (production, preview, branch deployments)
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://home-bite-13041.vercel.app",
+    "https://home-bite-13041.vercel.app",  # Production deployment
+]
+# Use regex to allow all Vercel domains (production, preview, branch deployments)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",  # All Vercel deployments
 ]
 # Add any additional CORS origins from environment variables
 if os.environ.get('ADDITIONAL_CORS_ORIGINS'):
@@ -189,9 +194,10 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
-    "https://home-bite-13041.vercel.app",
-    "https://*.railway.app",
-    "https://*.up.railway.app",
+    "https://home-bite-13041.vercel.app",  # Production deployment
+    "https://*.vercel.app",  # All Vercel deployments (production, preview, branch)
+    "https://*.railway.app",  # All Railway deployments
+    "https://*.up.railway.app",  # All Railway up domains
 ]
 
 # CSRF Cookie settings
