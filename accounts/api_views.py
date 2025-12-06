@@ -7,11 +7,14 @@ from .serializers import UserSerializer, CustomerSignupSerializer, CookSignupSer
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def current_user(request):
-    """Get current authenticated user"""
-    serializer = UserSerializer(request.user)
-    return Response(serializer.data)
+    """Get current authenticated user, or return null if not authenticated"""
+    if request.user.is_authenticated:
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+    else:
+        return Response({'user': None}, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
