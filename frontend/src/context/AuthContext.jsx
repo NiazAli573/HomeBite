@@ -34,7 +34,13 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       const userData = await authService.getCurrentUser();
-      setUser(userData);
+      // API returns {user: null} when not authenticated, or user object when authenticated
+      if (userData.user === null || (!userData.user && !userData.id)) {
+        setUser(null);
+      } else {
+        // If userData has user property, use it; otherwise userData is the user object
+        setUser(userData.user || userData);
+      }
     } catch (error) {
       setUser(null);
     } finally {
