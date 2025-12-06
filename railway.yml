@@ -4,11 +4,12 @@
 # Use Python 3.11
 NIXPACKS_PYTHON_VERSION=3.11
 
-# Install dependencies from both requirements files
+# Install dependencies
 NIXPACKS_INSTALL="pip install -r requirements.txt gunicorn dj-database-url"
 
-# Run migrations and collect static files
-NIXPACKS_BUILD="python manage.py migrate; python manage.py collectstatic --noinput"
+# Build: Run migrations and collect static files
+# IMPORTANT: Migrations MUST run during build to create database tables
+NIXPACKS_BUILD="python manage.py migrate --noinput && python manage.py collectstatic --noinput"
 
 # Start Gunicorn server
 NIXPACKS_START="gunicorn homebite.wsgi:application --bind 0.0.0.0:\$PORT"
