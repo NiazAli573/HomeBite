@@ -40,11 +40,9 @@ export const mealService = {
           formData.append(key, data[key]);
         }
       }
-      const response = await api.post('/meals/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      // Don't override Content-Type - let axios handle it automatically
+      // This ensures CSRF token and cookies are included
+      const response = await api.post('/meals/', formData);
       return response.data;
     } catch (error) {
       throw error;
@@ -60,11 +58,7 @@ export const mealService = {
           formData.append(key, data[key]);
         }
       }
-      const response = await api.put(`/meals/${id}/`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await api.put(`/meals/${id}/`, formData);
       return response.data;
     } catch (error) {
       throw error;
