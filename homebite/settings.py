@@ -64,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'homebite.middleware.DisableCSRFForAPIMiddleware',  # Disable CSRF for /api/
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -187,6 +188,7 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
+# CSRF configuration - Use regex patterns for dynamic domains
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -194,16 +196,23 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
-    "https://home-bite-13041.vercel.app",  # Production deployment
-    "https://*.vercel.app",  # All Vercel deployments (production, preview, branch)
-    "https://*.railway.app",  # All Railway deployments
-    "https://*.up.railway.app",  # All Railway up domains
+    "https://home-bite-13041.vercel.app",
+]
+
+# Add regex patterns for wildcard origins
+CSRF_TRUSTED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",  # All Vercel deployments
+    r"^https://.*\.railway\.app$",  # All Railway deployments
+    r"^https://.*\.up\.railway\.app$",  # Railway up domains
 ]
 
 # CSRF Cookie settings
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SAMESITE = 'Lax'
+# In production, HTTPS is handled by reverse proxy
+# So we should trust X-Forwarded-Proto header
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Distance settings (in kilometers)
 DEFAULT_SEARCH_RADIUS_KM = 2.0
