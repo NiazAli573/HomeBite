@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { mealService } from '../services/mealService';
 import { useAuth } from '../context/AuthContext';
 
 const BrowseMeals = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -13,6 +14,14 @@ const BrowseMeals = () => {
   const [customerLocation, setCustomerLocation] = useState(null);
   const [locationLoading, setLocationLoading] = useState(false);
   const [sortBy, setSortBy] = useState('distance'); // 'distance' or 'price'
+
+  // Check authentication and redirect if not logged in
+  useEffect(() => {
+    if (!authLoading && !user) {
+      // Redirect to customer signup if not authenticated
+      navigate('/signup/customer', { replace: true });
+    }
+  }, [user, authLoading, navigate]);
 
   // Request geolocation on component mount if user is a customer
   useEffect(() => {

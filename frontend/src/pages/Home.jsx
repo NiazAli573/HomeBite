@@ -1,6 +1,40 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Home = () => {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect to dashboard if user is logged in
+  useEffect(() => {
+    if (!loading && user) {
+      if (user.role === 'cook') {
+        navigate('/dashboard', { replace: true });
+      } else if (user.role === 'customer') {
+        navigate('/customer/dashboard', { replace: true });
+      }
+    }
+  }, [user, loading, navigate]);
+
+  // Show loading state while checking auth
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #F8F9FA 0%, #FFFFFF 100%)'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <i className="bi bi-hourglass-split" style={{ fontSize: '3rem', color: '#FF6B35', animation: 'spin 2s linear infinite' }}></i>
+          <p style={{ marginTop: '1rem', color: '#757575', fontWeight: '300' }}>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Hero Section */}

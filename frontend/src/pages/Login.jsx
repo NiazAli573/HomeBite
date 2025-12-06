@@ -12,16 +12,23 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || '/';
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      await login(username, password);
-      navigate(from, { replace: true });
+      const response = await login(username, password);
+      // Get the user role and redirect to appropriate dashboard
+      const userRole = response?.user?.role || location.state?.userRole;
+      
+      if (userRole === 'cook') {
+        navigate('/dashboard', { replace: true });
+      } else if (userRole === 'customer') {
+        navigate('/customer/dashboard', { replace: true });
+      } else {
+        navigate('/', { replace: true });
+      }
     } catch (err) {
       setError(err.response?.data?.error || 'Invalid username or password');
     } finally {
