@@ -68,7 +68,8 @@ const BrowseMeals = () => {
           data = data.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
         }
       } else {
-        data = await mealService.getMeals();
+        // Use browseMeals service which calls /meals/browse/ endpoint
+        data = await mealService.browseMeals();
         // Sort all meals by price or availability
         if (sortBy === 'price') {
           data = data.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
@@ -77,6 +78,7 @@ const BrowseMeals = () => {
       setMeals(data);
       setError('');
     } catch (err) {
+      console.error('Error fetching meals:', err);
       if (err.response?.status === 403) {
         setError('Please log in as a customer to view nearby meals');
         setShowNearby(false);
