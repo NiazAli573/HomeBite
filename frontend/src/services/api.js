@@ -13,7 +13,23 @@ api.interceptors.request.use(
     const csrfToken = getCookie('csrftoken');
     if (csrfToken) {
       config.headers['X-CSRFToken'] = csrfToken;
+      console.log('CSRF Token added:', csrfToken.substring(0, 10) + '...');
+    } else {
+      console.warn('No CSRF token found in cookies');
     }
+    
+    // Ensure Content-Type is not forced for FormData
+    if (config.data instanceof FormData) {
+      console.log('FormData detected, removing Content-Type header');
+      delete config.headers['Content-Type'];
+    }
+    
+    console.log(`API Request: ${config.method.toUpperCase()} ${config.url}`, {
+      hasCSRF: !!csrfToken,
+      isFormData: config.data instanceof FormData,
+      headers: config.headers
+    });
+    
     return config;
   },
   (error) => {
