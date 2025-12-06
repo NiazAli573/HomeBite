@@ -19,6 +19,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CustomerSignupSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True)
+    location_address = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    location_lat = serializers.DecimalField(max_digits=9, decimal_places=6, write_only=True, required=False, allow_null=True)
+    location_lng = serializers.DecimalField(max_digits=9, decimal_places=6, write_only=True, required=False, allow_null=True)
+    customer_type = serializers.CharField(write_only=True, required=False, default='office_worker')
+    # Support legacy field names for backward compatibility
     office_address = serializers.CharField(write_only=True, required=False, allow_blank=True)
     office_location_lat = serializers.DecimalField(max_digits=9, decimal_places=6, write_only=True, required=False, allow_null=True)
     office_location_lng = serializers.DecimalField(max_digits=9, decimal_places=6, write_only=True, required=False, allow_null=True)
@@ -28,6 +33,7 @@ class CustomerSignupSerializer(serializers.ModelSerializer):
         fields = [
             'username', 'email', 'password', 'password2',
             'first_name', 'last_name', 'phone',
+            'location_address', 'location_lat', 'location_lng', 'customer_type',
             'office_address', 'office_location_lat', 'office_location_lng'
         ]
         extra_kwargs = {'password': {'write_only': True}}
@@ -41,22 +47,25 @@ class CustomerSignupSerializer(serializers.ModelSerializer):
         validated_data.pop('password2')
         password = validated_data.pop('password')
         
-        # Extract customer profile fields
-        office_address = validated_data.pop('office_address', '')
-        office_location_lat = validated_data.pop('office_location_lat', None)
-        office_location_lng = validated_data.pop('office_location_lng', None)
+        # Extract customer profile fields - handle both new and legacy field names
+        # Prefer new generic names, fall back to legacy office-specific names for backward compatibility
+        location_address = validated_data.pop('location_address', None) or validated_data.pop('office_address', '')
+        location_lat = validated_data.pop('location_lat', None) or validated_data.pop('office_location_lat', None)
+        location_lng = validated_data.pop('location_lng', None) or validated_data.pop('office_location_lng', None)
+        customer_type = validated_data.pop('customer_type', 'office_worker')
         
         user = User.objects.create_user(
             password=password,
             role='customer',
             **validated_data
         )
-        # Create customer profile with location
+        # Create customer profile with location and customer type
         CustomerProfile.objects.create(
             user=user,
-            office_address=office_address,
-            office_location_lat=office_location_lat,
-            office_location_lng=office_location_lng
+            location_address=location_address,
+            location_lat=location_lat,
+            location_lng=location_lng,
+            customer_type=customer_type
         )
         return user
 

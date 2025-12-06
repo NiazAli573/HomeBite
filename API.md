@@ -29,11 +29,16 @@ Authorization: Bearer <token>
   "last_name": "Doe",
   "email": "john@example.com",
   "phone": "+923001234567",
-  "office_address": "123 Main Street, Karachi",
-  "office_location_lat": 24.8607,
-  "office_location_lng": 67.0011
+  "customer_type": "office_worker",
+  "location_address": "123 Main Street, Karachi",
+  "location_lat": 24.8607,
+  "location_lng": 67.0011
 }
 ```
+
+**Customer Types:**
+- `office_worker` - Office-based professionals needing meal delivery/pickup
+- `hostel_student` - University hostel residents
 
 **Response:** `201 Created`
 ```json
@@ -46,6 +51,9 @@ Authorization: Bearer <token>
   "token": "eyJ0eXAiOiJKV1QiLCJhbGc..."
 }
 ```
+
+**Backward Compatibility Notes:**
+The API accepts legacy field names (`office_address`, `office_location_lat`, `office_location_lng`) for backward compatibility. Use the new generic field names (`location_address`, `location_lat`, `location_lng`) for new implementations.
 
 ### Register as Cook
 **POST** `/auth/register/cook/`

@@ -67,18 +67,37 @@ class CookProfile(models.Model):
 
 
 class CustomerProfile(models.Model):
-    """Profile for customers (office workers) with office location."""
+    """Profile for customers with location (office workers or hostel students)."""
+    
+    CUSTOMER_TYPE_CHOICES = [
+        ('office_worker', 'Office Worker'),
+        ('hostel_student', 'Hostel Student'),
+    ]
     
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='customer_profile')
-    office_location_lat = models.DecimalField(
-        max_digits=9, decimal_places=6, null=True, blank=True,
-        help_text='Office latitude'
+    customer_type = models.CharField(
+        max_length=20, 
+        choices=CUSTOMER_TYPE_CHOICES, 
+        default='office_worker',
+        help_text='Are you an office worker or hostel student?'
     )
-    office_location_lng = models.DecimalField(
+    location_lat = models.DecimalField(
         max_digits=9, decimal_places=6, null=True, blank=True,
-        help_text='Office longitude'
+        help_text='Office or hostel latitude'
     )
-    office_address = models.TextField(blank=True)
+    location_lng = models.DecimalField(
+        max_digits=9, decimal_places=6, null=True, blank=True,
+        help_text='Office or hostel longitude'
+    )
+    location_address = models.TextField(blank=True, help_text='Office address or hostel name/location')
     
     def __str__(self):
-        return f"Customer: {self.user.username}"
+        return f"Customer: {self.user.username} ({self.get_customer_type_display()})"
+    
+    @property
+    def is_office_worker(self):
+        return self.customer_type == 'office_worker'
+    
+    @property
+    def is_hostel_student(self):
+        return self.customer_type == 'hostel_student'

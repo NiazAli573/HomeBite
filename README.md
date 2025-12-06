@@ -1,10 +1,10 @@
 # HomeBite
 
-🍽️ **Hyperlocal home-cooked meals marketplace** - Connecting home cooks with office workers for fresh, homemade meals.
+🍽️ **Hyperlocal home-cooked meals marketplace** - Connecting home cooks with customers (office workers & hostel students) for fresh, homemade meals.
 
 ## 🌟 Features
 
-### For Customers (Office Workers)
+### For Customers (Office Workers & Hostel Students)
 - **Browse Meals**: View all available meals with filters
 - **Nearby Meals**: Toggle to show only meals within 1-5 km radius using haversine distance calculation
 - **Meal Details**: View full meal info with cook ratings, location, and dine-in availability
@@ -15,6 +15,7 @@
 - **Customer Dashboard**: View active orders, completed orders, total spent, and orders awaiting rating
 - **Reorder**: Quick reorder button on completed orders
 - **Auto-refresh**: Dashboard polls for updates every 20 seconds
+- **Flexible Location**: Set location based on where you need meals delivered/picked up (office, hostel, or home)
 
 ### For Home Cooks
 - **Meal Management**: Create, edit, and delete meal listings with photos

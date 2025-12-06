@@ -12,9 +12,10 @@ const CustomerSignup = () => {
     first_name: '',
     last_name: '',
     phone_number: '',
-    office_address: '',
-    office_location_lat: '',
-    office_location_lng: '',
+    customer_type: 'office_worker', // office_worker or hostel_student
+    location_address: '',
+    location_lat: '',
+    location_lng: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,9 +34,9 @@ const CustomerSignup = () => {
   const handleLocationSelect = (locationData) => {
     setFormData({
       ...formData,
-      office_address: locationData.address,
-      office_location_lat: locationData.lat,
-      office_location_lng: locationData.lng,
+      location_address: locationData.address,
+      location_lat: locationData.lat,
+      location_lng: locationData.lng,
     });
     setLocationMessage('✓ Location selected successfully!');
     setTimeout(() => setLocationMessage(''), 3000);
@@ -89,7 +90,7 @@ const CustomerSignup = () => {
                 fontWeight: '300',
                 fontSize: '1rem'
               }}>
-                Join us as a customer and enjoy fresh, home-cooked meals
+                Join us and enjoy fresh, home-cooked meals delivered to you
               </p>
             </div>
 
@@ -306,7 +307,47 @@ const CustomerSignup = () => {
                   />
                 </div>
 
-                {/* Office Location Section */}
+                {/* Customer Type Selection */}
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    color: '#212529',
+                    fontWeight: '500',
+                    fontSize: '0.95rem'
+                  }}>
+                    Are you an Office Worker or Hostel Student? *
+                  </label>
+                  <select
+                    name="customer_type"
+                    value={formData.customer_type}
+                    onChange={handleChange}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem 1rem',
+                      border: '2px solid #E0E0E0',
+                      borderRadius: '0.5rem',
+                      fontSize: '0.95rem',
+                      fontFamily: 'inherit',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#FF6B35';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(255,107,53,0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#E0E0E0';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  >
+                    <option value="office_worker">Office Worker</option>
+                    <option value="hostel_student">Hostel Student</option>
+                  </select>
+                </div>
+
+                {/* Location Section */}
                 <div style={{
                   background: 'linear-gradient(135deg, #F0F7FF 0%, #F8FCFF 100%)',
                   border: '2px solid #3498DB',
@@ -321,14 +362,14 @@ const CustomerSignup = () => {
                     fontSize: '0.95rem'
                   }}>
                     <i className="bi bi-geo-alt me-2" style={{ color: '#3498DB' }}></i>
-                    Select Your Office Location (For Finding Nearby Meals)
+                    Select Your Location (For Finding Nearby Meals)
                   </h5>
 
                   <LocationPicker 
                     onLocationSelect={handleLocationSelect}
-                    initialAddress={formData.office_address}
-                    initialLat={formData.office_location_lat}
-                    initialLng={formData.office_location_lng}
+                    initialAddress={formData.location_address}
+                    initialLat={formData.location_lat}
+                    initialLng={formData.location_lng}
                   />
 
                   {locationMessage && (

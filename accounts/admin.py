@@ -81,6 +81,7 @@ class CookProfileAdmin(admin.ModelAdmin):
 class CustomerProfileAdmin(admin.ModelAdmin):
     """Admin for customer profiles."""
     
-    list_display = ['user', 'office_address']
-    search_fields = ['user__username', 'user__email', 'office_address']
+    list_display = ['user', 'customer_type', 'location_address']
+    list_filter = ['customer_type']
+    search_fields = ['user__username', 'user__email', 'location_address']
 
