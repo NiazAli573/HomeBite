@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Join HomeBite{% endblock %}
+
+{% block content %}
+<div style="background: linear-gradient(135deg, #F8F9FA 0%, #FFFFFF 100%); min-height: 100vh; padding: 4rem 0;">
+    <div class="container-lg">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 4rem;">
+            <img src="{% static 'img/logo.svg' %}" alt="HomeBite" style="width: 70px; height: 70px; margin-bottom: 1rem;">
+            <h1 style="font-size: 2.5rem; font-weight: 900; color: #212529; margin-bottom: 0.75rem;">Join HomeBite Community</h1>
+            <p style="color: #757575; font-weight: 300; font-size: 1.125rem; max-width: 500px; margin: 0 auto;">Choose your role and start your journey with us</p>
+        </div>
+        
+        <!-- Role Selection Cards -->
+        <div class="row g-4 justify-content-center">
+            <!-- Customer Card -->
+            <div class="col-md-6 col-lg-5">
+                <div class="card h-100 border-0" style="border-radius: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.08)'">
+                    <div class="card-body p-5" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <!-- Icon -->
+                        <div style="width: 90px; height: 90px; background: linear-gradient(135deg, #FF6B35, #E55A24); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; font-size: 2.5rem; color: white;">
+                            <i class="bi bi-bag-heart-fill"></i>
+                        </div>
+                        
+                        <h3 style="font-size: 1.5rem; font-weight: 700; color: #212529; margin-bottom: 1rem;">I'm a Customer</h3>
+                        <p style="color: #757575; font-weight: 300; line-height: 1.7; margin-bottom: 1.5rem; font-size: 1rem;">
+                            Order delicious, authentic home-cooked meals from talented local cooks near you
+                        </p>
+                        
+                        <div style="display: grid; gap: 0.75rem; width: 100%; margin-bottom: 1.5rem; text-align: left;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; color: #4a4e69;">
+                                <i class="bi bi-check-circle-fill" style="color: #27AE60; font-size: 1.1rem;"></i>
+                                <span style="font-size: 0.95rem;">Fresh meals delivered daily</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem; color: #4a4e69;">
+                                <i class="bi bi-check-circle-fill" style="color: #27AE60; font-size: 1.1rem;"></i>
+                                <span style="font-size: 0.95rem;">Support local cooks</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem; color: #4a4e69;">
+                                <i class="bi bi-check-circle-fill" style="color: #27AE60; font-size: 1.1rem;"></i>
+                                <span style="font-size: 0.95rem;">Easy online ordering</span>
+                            </div>
+                        </div>
+                        
+                        <a href="{% url 'accounts:customer_signup' %}" style="width: 100%; background: linear-gradient(135deg, #FF6B35, #E55A24); color: white; border: none; padding: 0.875rem 1.5rem; font-weight: 500; border-radius: 0.5rem; font-size: 1rem; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.3s ease;" onmouseover="this.style.boxShadow='0 8px 20px rgba(255,107,53,0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)'">
+                            <i class="bi bi-person-plus me-2"></i> Sign Up as Customer
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cook Card -->
+            <div class="col-md-6 col-lg-5">
+                <div class="card h-100 border-0" style="border-radius: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.08)'">
+                    <div class="card-body p-5" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <!-- Icon -->
+                        <div style="width: 90px; height: 90px; background: linear-gradient(135deg, #27AE60, #229954); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; font-size: 2.5rem; color: white;">
+                            <i class="bi bi-shop"></i>
+                        </div>
+                        
+                        <h3 style="font-size: 1.5rem; font-weight: 700; color: #212529; margin-bottom: 1rem;">I'm a Cook</h3>
+                        <p style="color: #757575; font-weight: 300; line-height: 1.7; margin-bottom: 1.5rem; font-size: 1rem;">
+                            Earn income by selling your delicious home-cooked meals to nearby customers
+                        </p>
+                        
+                        <div style="display: grid; gap: 0.75rem; width: 100%; margin-bottom: 1.5rem; text-align: left;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; color: #4a4e69;">
+                                <i class="bi bi-check-circle-fill" style="color: #27AE60; font-size: 1.1rem;"></i>
+                                <span style="font-size: 0.95rem;">Flexible working hours</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem; color: #4a4e69;">
+                                <i class="bi bi-check-circle-fill" style="color: #27AE60; font-size: 1.1rem;"></i>
+                                <span style="font-size: 0.95rem;">Build your customer base</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem; color: #4a4e69;">
+                                <i class="bi bi-check-circle-fill" style="color: #27AE60; font-size: 1.1rem;"></i>
+                                <span style="font-size: 0.95rem;">Easy meal management</span>
+                            </div>
+                        </div>
+                        
+                        <a href="{% url 'accounts:cook_signup' %}" style="width: 100%; background: linear-gradient(135deg, #27AE60, #229954); color: white; border: none; padding: 0.875rem 1.5rem; font-weight: 500; border-radius: 0.5rem; font-size: 1rem; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.3s ease;" onmouseover="this.style.boxShadow='0 8px 20px rgba(39,174,96,0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)'">
+                            <i class="bi bi-shop me-2"></i> Sign Up as Cook
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Login Link -->
+        <div style="text-align: center; margin-top: 3rem;">
+            <p style="color: #757575; font-weight: 300;">
+                Already have an account? 
+                <a href="{% url 'accounts:login' %}" style="color: #FF6B35; font-weight: 500; text-decoration: none;">Sign in here</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

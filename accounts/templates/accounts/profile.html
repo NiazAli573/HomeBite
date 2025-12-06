@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile - HomeBite{% endblock %}
+
+{% block content %}
+<div style="background-color: #F8F9FA; min-height: 100vh; padding: 3rem 0;">
+    <div class="container-lg">
+        <!-- Header -->
+        <div style="margin-bottom: 2.5rem;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #FF6B35, #E55A24); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.75rem;">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <div>
+                    <h1 style="font-size: 2rem; font-weight: 900; color: #212529; margin-bottom: 0.25rem;">My Profile</h1>
+                    <p style="color: #757575; margin-bottom: 0; font-weight: 300;">Manage your account settings</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-8">
+                <!-- Card -->
+                <div class="card border-0" style="border-radius: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden;">
+                    <!-- Card Header -->
+                    <div style="background: linear-gradient(135deg, #FF6B35, #E55A24); padding: 2rem; color: white;">
+                        <h4 style="margin-bottom: 0; font-weight: 700;">
+                            <i class="bi bi-person-check me-2"></i> Account Details
+                        </h4>
+                    </div>
+                    
+                    <div class="card-body p-5">
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+                            
+                            <!-- Account Information Section -->
+                            <h5 style="font-weight: 700; color: #212529; margin-bottom: 1.5rem; font-size: 1.1rem;">
+                                <i class="bi bi-shield-check me-2" style="color: #FF6B35;"></i>Account Information
+                            </h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" value="{{ user.username }}" disabled>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Role</label>
+                                <input type="text" class="form-control" value="{{ user.get_role_display }}" disabled>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_first_name" class="form-label">First Name</label>
+                                {{ user_form.first_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_last_name" class="form-label">Last Name</label>
+                                {{ user_form.last_name }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_email" class="form-label">Email</label>
+                                {{ user_form.email }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_phone" class="form-label">Phone</label>
+                                {{ user_form.phone }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_address" class="form-label">Address</label>
+                            {{ user_form.address }}
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        {% if user.is_cook %}
+                        <h5 class="mb-3"><i class="bi bi-shop"></i> Kitchen Information</h5>
+                        
+                        <div class="mb-3">
+                            <label for="id_kitchen_address" class="form-label">Kitchen Address</label>
+                            {{ profile_form.kitchen_address }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_bio" class="form-label">About You</label>
+                            {{ profile_form.bio }}
+                        </div>
+                        
+                        <div id="map" style="height: 250px; border-radius: 8px; margin-bottom: 1rem;"></div>
+                        
+                        <button type="button" class="btn btn-outline-primary btn-sm mb-3" onclick="getLocation()">
+                            <i class="bi bi-crosshairs"></i> Update Location
+                        </button>
+                        
+                        {{ profile_form.kitchen_location_lat }}
+                        {{ profile_form.kitchen_location_lng }}
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h3 class="text-primary">{{ user.cook_profile.rating }}</h3>
+                                        <small class="text-muted">Rating</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h3 class="text-success">{{ user.cook_profile.total_orders }}</h3>
+                                        <small class="text-muted">Total Orders</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h3 class="text-info">{{ user.cook_profile.total_ratings }}</h3>
+                                        <small class="text-muted">Total Ratings</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% else %}
+                        <h5 class="mb-3"><i class="bi bi-geo-alt"></i> Office Location</h5>
+                        
+                        <div class="mb-3">
+                            <label for="id_office_address" class="form-label">Office Address</label>
+                            {{ profile_form.office_address }}
+                        </div>
+                        
+                        <div id="map" style="height: 250px; border-radius: 8px; margin-bottom: 1rem;"></div>
+                        
+                        <button type="button" class="btn btn-outline-primary btn-sm mb-3" onclick="getLocation()">
+                            <i class="bi bi-crosshairs"></i> Update Location
+                        </button>
+                        
+                        {{ profile_form.office_location_lat }}
+                        {{ profile_form.office_location_lng }}
+                        {% endif %}
+                        
+                        <hr class="my-4">
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Get initial location
+    var initialLat = {% if user.is_cook %}{{ user.cook_profile.kitchen_location_lat|default:"24.8607" }}{% else %}{{ user.customer_profile.office_location_lat|default:"24.8607" }}{% endif %};
+    var initialLng = {% if user.is_cook %}{{ user.cook_profile.kitchen_location_lng|default:"67.0011" }}{% else %}{{ user.customer_profile.office_location_lng|default:"67.0011" }}{% endif %};
+    
+    // Initialize map
+    var map = L.map('map').setView([initialLat, initialLng], 14);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    var marker = L.marker([initialLat, initialLng]).addTo(map);
+    
+    // Handle map click
+    map.on('click', function(e) {
+        setMarker(e.latlng.lat, e.latlng.lng);
+    });
+    
+    function setMarker(lat, lng) {
+        if (marker) {
+            map.removeLayer(marker);
+        }
+        marker = L.marker([lat, lng]).addTo(map);
+        {% if user.is_cook %}
+        document.getElementById('id_kitchen_location_lat').value = lat.toFixed(6);
+        document.getElementById('id_kitchen_location_lng').value = lng.toFixed(6);
+        {% else %}
+        document.getElementById('id_office_location_lat').value = lat.toFixed(6);
+        document.getElementById('id_office_location_lng').value = lng.toFixed(6);
+        {% endif %}
+    }
+    
+    // Get current location
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                setMarker(lat, lng);
+                map.setView([lat, lng], 15);
+            }, function(error) {
+                alert('Could not get your location. Please click on the map instead.');
+            });
+        } else {
+            alert('Geolocation is not supported by your browser.');
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4"><i class="bi bi-bag-check text-primary"></i> My Orders</h2>
+    
+    {% if orders %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Meal</th>
+                    <th>Cook</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td><span class="badge bg-primary">{{ order.order_id }}</span></td>
+                    <td>
+                        <a href="{% url 'meals:detail' order.meal.pk %}">{{ order.meal.name }}</a>
+                    </td>
+                    <td>{{ order.cook.user.username }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td class="text-primary fw-bold">PKR {{ order.total_price }}</td>
+                    <td>
+                        {% if order.delivery_type == 'pickup' %}
+                        <span class="badge bg-info"><i class="bi bi-bag"></i> Pickup</span>
+                        {% else %}
+                        <span class="badge bg-warning"><i class="bi bi-bicycle"></i> Delivery</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if order.status == 'pending' %}
+                        <span class="badge bg-secondary">Pending</span>
+                        {% elif order.status == 'confirmed' %}
+                        <span class="badge bg-info">Confirmed</span>
+                        {% elif order.status == 'ready' %}
+                        <span class="badge bg-success">Ready</span>
+                        {% elif order.status == 'completed' %}
+                        <span class="badge bg-success">Completed</span>
+                        {% elif order.status == 'cancelled' %}
+                        <span class="badge bg-danger">Cancelled</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ order.created_at|date:"M d, Y H:i" }}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{% url 'orders:detail' order.pk %}" class="btn btn-outline-primary" title="View">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            {% if order.status == 'completed' %}
+                            <a href="{% url 'orders:rate' order.pk %}" class="btn btn-outline-warning" title="Rate">
+                                <i class="bi bi-star"></i>
+                            </a>
+                            {% endif %}
+                            {% if order.status in 'pending,confirmed' %}
+                            <a href="{% url 'orders:cancel' order.pk %}" class="btn btn-outline-danger" title="Cancel">
+                                <i class="bi bi-x-circle"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-bag display-1 text-muted"></i>
+        <h4 class="mt-3">No orders yet</h4>
+        <p class="text-muted">Start browsing delicious meals and place your first order!</p>
+        <a href="{% url 'meals:browse' %}" class="btn btn-primary">
+            <i class="bi bi-search"></i> Browse Meals
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

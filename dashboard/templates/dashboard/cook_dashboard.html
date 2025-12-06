@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cook Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-speedometer2 text-primary"></i> Cook Dashboard</h2>
+        <span class="text-muted">{{ today|date:"l, F d, Y" }}</span>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Today's Orders</h6>
+                            <h2 class="mb-0">{{ todays_stats.total_orders|default:0 }}</h2>
+                        </div>
+                        <i class="bi bi-bag-check fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Today's Earnings</h6>
+                            <h2 class="mb-0">PKR {{ todays_stats.total_earnings|default:0 }}</h2>
+                        </div>
+                        <i class="bi bi-currency-dollar fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Pending</h6>
+                            <h2 class="mb-0">{{ todays_stats.pending_count|default:0 }}</h2>
+                        </div>
+                        <i class="bi bi-hourglass-split fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Your Rating</h6>
+                            <h2 class="mb-0">
+                                <i class="bi bi-star-fill"></i> {{ all_stats.rating|floatformat:1 }}
+                            </h2>
+                        </div>
+                        <i class="bi bi-trophy fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="mb-3"><i class="bi bi-lightning"></i> Quick Actions</h6>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{% url 'meals:create' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Add New Meal
+                        </a>
+                        <a href="{% url 'meals:my_meals' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-egg-fried"></i> Manage Meals
+                        </a>
+                        <a href="{% url 'dashboard:order_history' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-clock-history"></i> Order History
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Today's Orders -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-bag-check"></i> Today's Orders</h5>
+            <span class="badge bg-primary">{{ orders|length }} orders</span>
+        </div>
+        <div class="card-body p-0">
+            {% if orders %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Time</th>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Meal</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>{{ order.created_at|time:"H:i" }}</td>
+                            <td><span class="badge bg-primary">{{ order.order_id }}</span></td>
+                            <td>
+                                <strong>{{ order.customer.user.username }}</strong>
+                                <br>
+                                <small class="text-muted">{{ order.customer_phone }}</small>
+                            </td>
+                            <td>{{ order.meal.name }}</td>
+                            <td>{{ order.quantity }}</td>
+                            <td class="text-primary fw-bold">PKR {{ order.total_price }}</td>
+                            <td>
+                                {% if order.delivery_type == 'pickup' %}
+                                <span class="badge bg-info"><i class="bi bi-bag"></i> Pickup</span>
+                                {% else %}
+                                <span class="badge bg-warning"><i class="bi bi-bicycle"></i> Delivery</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if order.status == 'pending' %}
+                                <span class="badge bg-secondary">Pending</span>
+                                {% elif order.status == 'confirmed' %}
+                                <span class="badge bg-info">Confirmed</span>
+                                {% elif order.status == 'ready' %}
+                                <span class="badge bg-success">Ready</span>
+                                {% elif order.status == 'completed' %}
+                                <span class="badge bg-success">Completed</span>
+                                {% elif order.status == 'cancelled' %}
+                                <span class="badge bg-danger">Cancelled</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if order.status == 'pending' or order.status == 'confirmed' %}
+                                <form action="{% url 'dashboard:mark_ready' order.pk %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm" title="Mark Ready">
+                                        <i class="bi bi-check"></i> Ready
+                                    </button>
+                                </form>
+                                {% elif order.status == 'ready' %}
+                                <form action="{% url 'dashboard:mark_completed' order.pk %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary btn-sm" title="Mark Completed">
+                                        <i class="bi bi-check-all"></i> Complete
+                                    </button>
+                                </form>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-inbox display-1 text-muted"></i>
+                <h5 class="mt-3">No orders today</h5>
+                <p class="text-muted">Check back later for new orders!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

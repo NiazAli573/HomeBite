@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order {{ order.order_id }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'orders:history' %}">My Orders</a></li>
+            <li class="breadcrumb-item active">{{ order.order_id }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-receipt"></i> Order Details</h5>
+                    <span class="badge bg-light text-dark">{{ order.order_id }}</span>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Status Banner -->
+                    <div class="alert {% if order.status == 'completed' %}alert-success{% elif order.status == 'cancelled' %}alert-danger{% elif order.status == 'ready' %}alert-info{% else %}alert-warning{% endif %} text-center mb-4">
+                        <h5 class="mb-0">
+                            {% if order.status == 'pending' %}
+                            <i class="bi bi-hourglass-split"></i> Order Pending
+                            {% elif order.status == 'confirmed' %}
+                            <i class="bi bi-check-circle"></i> Order Confirmed
+                            {% elif order.status == 'ready' %}
+                            <i class="bi bi-bell"></i> Ready for {{ order.get_delivery_type_display }}!
+                            {% elif order.status == 'completed' %}
+                            <i class="bi bi-check-circle-fill"></i> Order Completed
+                            {% elif order.status == 'cancelled' %}
+                            <i class="bi bi-x-circle"></i> Order Cancelled
+                            {% endif %}
+                        </h5>
+                    </div>
+                    
+                    <!-- Meal Info -->
+                    <div class="d-flex mb-4">
+                        {% if order.meal.photo %}
+                        <img src="{{ order.meal.photo.url }}" class="rounded me-3" alt="{{ order.meal.name }}" style="width: 100px; height: 100px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                            <i class="bi bi-image text-muted fs-2"></i>
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h5 class="mb-1">{{ order.meal.name }}</h5>
+                            <p class="text-muted mb-1">by {{ order.cook.user.username }}</p>
+                            <p class="mb-0">
+                                {{ order.quantity }} × PKR {{ order.meal.price }} = 
+                                <strong class="text-primary">PKR {{ order.total_price }}</strong>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <!-- Order Details -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Order Information</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td>Delivery Type:</td>
+                                    <td><strong>{{ order.get_delivery_type_display }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Payment:</td>
+                                    <td><strong>{{ order.get_payment_method_display }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Order Date:</td>
+                                    <td><strong>{{ order.created_at|date:"M d, Y H:i" }}</strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Contact Information</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td>Your Phone:</td>
+                                    <td><strong>{{ order.customer_phone }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Cook:</td>
+                                    <td><strong>{{ order.cook.user.username }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Cook Phone:</td>
+                                    <td><strong>{{ order.cook.user.phone }}</strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    {% if order.notes %}
+                    <hr>
+                    <h6 class="text-muted">Special Instructions</h6>
+                    <p>{{ order.notes }}</p>
+                    {% endif %}
+                    
+                    {% if order.delivery_type == 'pickup' and order.cook.kitchen_address %}
+                    <hr>
+                    <h6 class="text-muted"><i class="bi bi-geo-alt"></i> Pickup Location</h6>
+                    <p class="mb-2">{{ order.cook.kitchen_address }}</p>
+                    {% if order.cook.kitchen_location_lat and order.cook.kitchen_location_lng %}
+                    <div id="map" style="height: 200px; border-radius: 8px;"></div>
+                    {% endif %}
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <!-- Actions -->
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{% url 'orders:history' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-arrow-left"></i> Back to Orders
+                        </a>
+                        {% if order.status == 'completed' %}
+                        <a href="{% url 'orders:rate' order.pk %}" class="btn btn-warning">
+                            <i class="bi bi-star"></i> Rate This Order
+                        </a>
+                        {% endif %}
+                        {% if order.status in 'pending,confirmed' %}
+                        <a href="{% url 'orders:cancel' order.pk %}" class="btn btn-outline-danger">
+                            <i class="bi bi-x-circle"></i> Cancel Order
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if order.delivery_type == 'pickup' and order.cook.kitchen_location_lat and order.cook.kitchen_location_lng %}
+<script>
+    var lat = {{ order.cook.kitchen_location_lat }};
+    var lng = {{ order.cook.kitchen_location_lng }};
+    
+    var map = L.map('map').setView([lat, lng], 15);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup("<strong>Pickup Location</strong>")
+        .openPopup();
+</script>
+{% endif %}
+{% endblock %}

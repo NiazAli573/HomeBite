@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cook Sign Up{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow border-0">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">
+                        <i class="bi bi-shop text-success"></i>
+                        Become a Home Cook
+                    </h2>
+                    <p class="text-center text-muted mb-4">
+                        Start selling your delicious home-cooked meals to local customers
+                    </p>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Note:</strong> Your account will need admin approval before you can start selling meals.
+                    </div>
+                    
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="mb-3"><i class="bi bi-person"></i> Account Information</h5>
+                                
+                                <div class="mb-3">
+                                    <label for="id_username" class="form-label">Username *</label>
+                                    {{ form.username }}
+                                    {% if form.username.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="id_email" class="form-label">Email *</label>
+                                    {{ form.email }}
+                                    {% if form.email.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="id_phone" class="form-label">Phone Number *</label>
+                                    {{ form.phone }}
+                                    {% if form.phone.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.phone.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="id_cnic" class="form-label">CNIC (Optional)</label>
+                                    {{ form.cnic }}
+                                    <small class="text-muted">Format: XXXXX-XXXXXXX-X</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="id_password1" class="form-label">Password *</label>
+                                    {{ form.password1 }}
+                                    {% if form.password1.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.password1.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="id_password2" class="form-label">Confirm Password *</label>
+                                    {{ form.password2 }}
+                                    {% if form.password2.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.password2.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h5 class="mb-3"><i class="bi bi-geo-alt"></i> Kitchen Location</h5>
+                                
+                                <div class="mb-3">
+                                    <label for="id_address" class="form-label">Your Address *</label>
+                                    {{ form.address }}
+                                    {% if form.address.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.address.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="id_kitchen_address" class="form-label">Kitchen Address *</label>
+                                    {{ form.kitchen_address }}
+                                    {% if form.kitchen_address.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.kitchen_address.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div id="map" style="height: 200px; border-radius: 8px; margin-bottom: 1rem;"></div>
+                                <p class="text-muted small mb-2">
+                                    <i class="bi bi-info-circle"></i>
+                                    Click on the map to set your kitchen location *
+                                </p>
+                                
+                                <button type="button" class="btn btn-outline-primary btn-sm mb-3" onclick="getLocation()">
+                                    <i class="bi bi-crosshairs"></i> Use My Current Location
+                                </button>
+                                
+                                {% if form.kitchen_location_lat.errors %}
+                                <div class="invalid-feedback d-block">Please set your kitchen location on the map</div>
+                                {% endif %}
+                                
+                                {{ form.kitchen_location_lat }}
+                                {{ form.kitchen_location_lng }}
+                                
+                                <div class="mb-3">
+                                    <label for="id_bio" class="form-label">About You</label>
+                                    {{ form.bio }}
+                                    <small class="text-muted">Tell customers about your cooking style</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-shop"></i> Create Cook Account
+                        </button>
+                    </form>
+                    
+                    <hr>
+                    
+                    <p class="text-center mb-0">
+                        Already have an account? <a href="{% url 'accounts:login' %}">Login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize map
+    var map = L.map('map').setView([24.8607, 67.0011], 12); // Default: Karachi
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    var marker = null;
+    
+    // Handle map click
+    map.on('click', function(e) {
+        setMarker(e.latlng.lat, e.latlng.lng);
+    });
+    
+    function setMarker(lat, lng) {
+        if (marker) {
+            map.removeLayer(marker);
+        }
+        marker = L.marker([lat, lng]).addTo(map);
+        document.getElementById('id_kitchen_location_lat').value = lat.toFixed(6);
+        document.getElementById('id_kitchen_location_lng').value = lng.toFixed(6);
+    }
+    
+    // Get current location
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                setMarker(lat, lng);
+                map.setView([lat, lng], 15);
+            }, function(error) {
+                alert('Could not get your location. Please click on the map instead.');
+            });
+        } else {
+            alert('Geolocation is not supported by your browser.');
+        }
+    }
+</script>
+{% endblock %}

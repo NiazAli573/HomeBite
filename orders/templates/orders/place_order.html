@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Place Order - {{ meal.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'meals:browse' %}">Browse Meals</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'meals:detail' meal.pk %}">{{ meal.name }}</a></li>
+            <li class="breadcrumb-item active">Place Order</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-cart-plus"></i> Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex mb-3">
+                        {% if meal.photo %}
+                        <img src="{{ meal.photo.url }}" class="rounded me-3" alt="{{ meal.name }}" style="width: 100px; height: 100px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                            <i class="bi bi-image text-muted"></i>
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h5 class="mb-1">{{ meal.name }}</h5>
+                            <p class="text-muted mb-1">by {{ meal.cook.user.username }}</p>
+                            <span class="h5 text-primary">PKR {{ meal.price }}</span>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Ready Time:</span>
+                        <strong>{{ meal.ready_time|time:"h:i A" }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Available:</span>
+                        <strong>{{ meal.quantity_available }} servings</strong>
+                    </div>
+                    
+                    {% if meal.cook.kitchen_address %}
+                    <hr>
+                    <div>
+                        <strong><i class="bi bi-geo-alt"></i> Pickup Location:</strong>
+                        <p class="text-muted mb-0 small">{{ meal.cook.kitchen_address }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-bag-check"></i> Place Your Order</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_quantity" class="form-label">Quantity</label>
+                            {{ form.quantity }}
+                            <small class="text-muted">Max: {{ meal.quantity_available }}</small>
+                            {% if form.quantity.errors %}
+                            <div class="invalid-feedback d-block">{{ form.quantity.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Delivery Type</label>
+                            <div class="d-flex gap-3">
+                                {% for radio in form.delivery_type %}
+                                <div class="form-check">
+                                    {{ radio.tag }}
+                                    <label class="form-check-label" for="{{ radio.id_for_label }}">
+                                        {% if radio.choice_label == 'Pickup' %}
+                                        <i class="bi bi-bag"></i>
+                                        {% else %}
+                                        <i class="bi bi-bicycle"></i>
+                                        {% endif %}
+                                        {{ radio.choice_label }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.delivery_type.errors %}
+                            <div class="invalid-feedback d-block">{{ form.delivery_type.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_customer_phone" class="form-label">Your Phone Number</label>
+                            {{ form.customer_phone }}
+                            {% if form.customer_phone.errors %}
+                            <div class="invalid-feedback d-block">{{ form.customer_phone.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_notes" class="form-label">Special Instructions (Optional)</label>
+                            {{ form.notes }}
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="bi bi-cash"></i>
+                            <strong>Payment:</strong> Cash on {{ form.delivery_type.value|default:"pickup/delivery" }}
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="h5 mb-0">Total:</span>
+                            <span class="h4 text-primary mb-0" id="totalPrice">PKR {{ meal.price }}</span>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success btn-lg w-100">
+                            <i class="bi bi-check-circle"></i> Confirm Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    var pricePerUnit = {{ meal.price }};
+    var quantityInput = document.getElementById('id_quantity');
+    var totalDisplay = document.getElementById('totalPrice');
+    
+    quantityInput.addEventListener('change', function() {
+        var quantity = parseInt(this.value) || 1;
+        var total = pricePerUnit * quantity;
+        totalDisplay.textContent = 'PKR ' + total.toFixed(0);
+    });
+</script>
+{% endblock %}

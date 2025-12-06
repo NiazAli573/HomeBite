@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - Fresh Home-Cooked Meals Near You{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-white py-5" style="background: linear-gradient(135deg, #FF6B35 0%, #E55A24 100%); min-height: 70vh; display: flex; align-items: center;">
+    <div class="container-lg">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h1 style="font-size: 3.5rem; font-weight: 900; margin-bottom: 1.5rem; line-height: 1.2;">
+                    Fresh Home-Cooked Meals <br>
+                    <span style="display: block; font-size: 2.5rem; margin-top: 0.5rem; font-weight: 700;">Near You</span>
+                </h1>
+                <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.95; font-weight: 300; line-height: 1.7;">
+                    Discover authentic, hyperlocal meals from talented home cooks in your neighborhood. 
+                    Support local kitchen heroes. Enjoy real food, made with love.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{% url 'meals:browse' %}" class="btn btn-light btn-lg" style="font-weight: 500;">
+                        <i class="bi bi-search me-2"></i> Browse Meals
+                    </a>
+                    <a href="{% url 'accounts:cook_signup' %}" class="btn btn-outline-light btn-lg" style="font-weight: 500; border-width: 2px;">
+                        <i class="bi bi-shop me-2"></i> Become a Cook
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="{% static 'img/logo.svg' %}" alt="HomeBite Logo" style="width: 280px; height: 280px; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.2));">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section style="padding: 5rem 0; background-color: #F8F9FA;">
+    <div class="container-lg">
+        <h2 style="text-align: center; margin-bottom: 3rem; font-size: 2.5rem; font-weight: 900;">How It Works</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0" style="border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(255,107,53,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.1)'">
+                    <div class="card-body p-5 text-center">
+                        <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, #FF6B35, #E55A24); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: white;">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </div>
+                        <h5 style="font-weight: 700; margin-bottom: 1rem; font-size: 1.25rem;">Find Meals Near You</h5>
+                        <p style="color: #757575; font-weight: 300; line-height: 1.6;">
+                            Enable location access to discover home cooks within 1-10 km radius. See exactly how far each meal is!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0" style="border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(255,107,53,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.1)'">
+                    <div class="card-body p-5 text-center">
+                        <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, #FF6B35, #E55A24); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: white;">
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+                        <h5 style="font-weight: 700; margin-bottom: 1rem; font-size: 1.25rem;">Browse & Rate</h5>
+                        <p style="color: #757575; font-weight: 300; line-height: 1.6;">
+                            Check ratings, reviews, and meal details. See what other customers loved about each cook's meals.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0" style="border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(255,107,53,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.1)'">
+                    <div class="card-body p-5 text-center">
+                        <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, #FF6B35, #E55A24); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: white;">
+                            <i class="bi bi-bag-check-fill"></i>
+                        </div>
+                        <h5 style="font-weight: 700; margin-bottom: 1rem; font-size: 1.25rem;">Order & Enjoy</h5>
+                        <p style="color: #757575; font-weight: 300; line-height: 1.6;">
+                            Place your order, choose delivery or dine-in. Pay on delivery. Enjoy fresh, authentic home-cooked food!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- For Customers -->
+<section style="padding: 5rem 0;">
+    <div class="container-lg">
+        <div class="row align-items-center gap-5">
+            <div class="col-lg-6">
+                <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 2rem;">For Office Workers</h2>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1rem;">
+                        <i class="bi bi-check-circle-fill" style="color: #27AE60; font-size: 1.5rem; flex-shrink: 0; margin-top: 0.25rem;"></i>
+                        <div>
+                            <strong style="font-size: 1.1rem; display: block; margin-bottom: 0.25rem;">Fresh & Healthy</strong>
+                            <span style="color: #757575; font-weight: 300;">Home-cooked meals made with love and quality ingredients</span>
+                        </div>
+                    </li>
+                    <li style="margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1rem;">
+                        <i class="bi bi-check-circle-fill" style="color: #27AE60; font-size: 1.5rem; flex-shrink: 0; margin-top: 0.25rem;"></i>
+                        <div>
+                            <strong style="font-size: 1.1rem; display: block; margin-bottom: 0.25rem;">Hyperlocal</strong>
+                            <span style="color: #757575; font-weight: 300;">Support talented cooks in your neighborhood</span>
+                        </div>
+                    </li>
+                    <li style="margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1rem;">
+                        <i class="bi bi-check-circle-fill" style="color: #27AE60; font-size: 1.5rem; flex-shrink: 0; margin-top: 0.25rem;"></i>
+                        <div>
+                            <strong style="font-size: 1.1rem; display: block; margin-bottom: 0.25rem;">Affordable</strong>
+                            <span style="color: #757575; font-weight: 300;">Quality meals at honest, reasonable prices</span>
+                        </div>
+                    </li>
+                    <li style="margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1rem;">
+                        <i class="bi bi-check-circle-fill" style="color: #27AE60; font-size: 1.5rem; flex-shrink: 0; margin-top: 0.25rem;"></i>
+                        <div>
+                            <strong style="font-size: 1.1rem; display: block; margin-bottom: 0.25rem;">Convenient</strong>
+                            <span style="color: #757575; font-weight: 300;">Order online, flexible payment, pickup or delivery</span>
+                        </div>
+                    </li>
+                </ul>
+                <a href="{% url 'accounts:customer_signup' %}" class="btn btn-lg" style="background: linear-gradient(135deg, #FF6B35, #E55A24); color: white; font-weight: 500; border: none; margin-top: 1rem;">
+                    <i class="bi bi-person-plus me-2"></i> Sign Up as Customer
+                </a>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0" style="border-radius: 1rem; background: linear-gradient(135deg, rgba(255,107,53,0.1), rgba(229,90,36,0.1)); padding: 3rem;">
+                    <div class="text-center">
+                        <i class="bi bi-bag-heart" style="font-size: 5rem; color: #FF6B35; opacity: 0.8;"></i>
+                        <p style="margin-top: 1.5rem; font-size: 1.1rem; color: #757575; font-weight: 300;">Join thousands of happy customers enjoying delicious home-cooked meals</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- For Cooks -->
+<section style="padding: 5rem 0; background-color: #F8F9FA;">
+    <div class="container-lg">
+        <div class="row align-items-center gap-5">
+            <div class="col-lg-6 order-lg-2">
+                <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 2rem;">For Home Cooks</h2>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1rem;">
+                        <i class="bi bi-check-circle-fill" style="color: #27AE60; font-size: 1.5rem; flex-shrink: 0; margin-top: 0.25rem;"></i>
+                        <div>
+                            <strong style="font-size: 1.1rem; display: block; margin-bottom: 0.25rem;">Earn From Home</strong>
+                            <span style="color: #757575; font-weight: 300;">Turn your cooking skills into a flexible income stream</span>
+                        </div>
+                    </li>
+                    <li style="margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1rem;">
+                        <i class="bi bi-check-circle-fill" style="color: #27AE60; font-size: 1.5rem; flex-shrink: 0; margin-top: 0.25rem;"></i>
+                        <div>
+                            <strong style="font-size: 1.1rem; display: block; margin-bottom: 0.25rem;">Flexible Schedule</strong>
+                            <span style="color: #757575; font-weight: 300;">Cook when it suits you, no fixed hours required</span>
+                        </div>
+                    </li>
+                    <li style="margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1rem;">
+                        <i class="bi bi-check-circle-fill" style="color: #27AE60; font-size: 1.5rem; flex-shrink: 0; margin-top: 0.25rem;"></i>
+                        <div>
+                            <strong style="font-size: 1.1rem; display: block; margin-bottom: 0.25rem;">Build Your Brand</strong>
+                            <span style="color: #757575; font-weight: 300;">Get customer ratings and build your reputation</span>
+                        </div>
+                    </li>
+                    <li style="margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1rem;">
+                        <i class="bi bi-check-circle-fill" style="color: #27AE60; font-size: 1.5rem; flex-shrink: 0; margin-top: 0.25rem;"></i>
+                        <div>
+                            <strong style="font-size: 1.1rem; display: block; margin-bottom: 0.25rem;">Easy Management</strong>
+                            <span style="color: #757575; font-weight: 300;">Simple dashboard to manage orders and analytics</span>
+                        </div>
+                    </li>
+                </ul>
+                <a href="{% url 'accounts:cook_signup' %}" class="btn btn-lg" style="background: linear-gradient(135deg, #FF6B35, #E55A24); color: white; font-weight: 500; border: none; margin-top: 1rem;">
+                    <i class="bi bi-shop me-2"></i> Start Cooking Today
+                </a>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <div class="card border-0" style="border-radius: 1rem; background: linear-gradient(135deg, rgba(255,107,53,0.1), rgba(229,90,36,0.1)); padding: 3rem;">
+                    <div class="text-center">
+                        <i class="bi bi-shop" style="font-size: 5rem; color: #FF6B35; opacity: 0.8;"></i>
+                        <p style="margin-top: 1.5rem; font-size: 1.1rem; color: #757575; font-weight: 300;">Join our community of passionate home cooks earning sustainable income</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section style="padding: 5rem 0; background: linear-gradient(135deg, #FF6B35, #E55A24); color: white;">
+    <div class="container-lg text-center">
+        <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem;">Ready to Get Started?</h2>
+        <p style="font-size: 1.2rem; margin-bottom: 2.5rem; opacity: 0.95; font-weight: 300;">Join HomeBite today and be part of the hyperlocal food revolution!</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'meals:browse' %}" class="btn btn-light btn-lg" style="font-weight: 500;">
+                <i class="bi bi-search me-2"></i> Browse Meals Now
+            </a>
+            <a href="{% url 'accounts:signup_choice' %}" class="btn btn-outline-light btn-lg" style="font-weight: 500; border-width: 2px;">
+                <i class="bi bi-person-plus me-2"></i> Create Account
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

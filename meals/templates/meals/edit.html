@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit {{ meal.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'meals:my_meals' %}">My Meals</a></li>
+            <li class="breadcrumb-item active">Edit {{ meal.name }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-pencil"></i> Edit Meal</h5>
+                </div>
+                <div class="card-body p-4">
+                    {% if meal.photo %}
+                    <div class="mb-3 text-center">
+                        <img src="{{ meal.photo.url }}" class="img-thumbnail" alt="{{ meal.name }}" style="max-height: 200px;">
+                        <p class="small text-muted mt-1">Current photo</p>
+                    </div>
+                    {% endif %}
+                    
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_name" class="form-label">Dish Name *</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                            <div class="invalid-feedback d-block">{{ form.name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description</label>
+                            {{ form.description }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_photo" class="form-label">Photo</label>
+                            {{ form.photo }}
+                            <small class="text-muted">Upload a new photo to replace the current one</small>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_price" class="form-label">Price (PKR) *</label>
+                                {{ form.price }}
+                                {% if form.price.errors %}
+                                <div class="invalid-feedback d-block">{{ form.price.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_quantity_available" class="form-label">Quantity Available *</label>
+                                {{ form.quantity_available }}
+                                {% if form.quantity_available.errors %}
+                                <div class="invalid-feedback d-block">{{ form.quantity_available.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_ready_time" class="form-label">Ready Time *</label>
+                            {{ form.ready_time }}
+                            {% if form.ready_time.errors %}
+                            <div class="invalid-feedback d-block">{{ form.ready_time.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-4 form-check">
+                            {{ form.is_active }}
+                            <label class="form-check-label" for="id_is_active">
+                                Make this meal active
+                            </label>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Save Changes
+                            </button>
+                            <a href="{% url 'meals:my_meals' %}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
