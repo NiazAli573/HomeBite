@@ -206,12 +206,15 @@ CSRF_TRUSTED_ORIGIN_REGEXES = [
     r"^https://.*\.up\.railway\.app$",  # Railway up domains
 ]
 
-# CSRF Cookie settings
+# CSRF/Cookie settings for cross-site frontend (Vercel → Railway)
 CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SAMESITE = 'Lax'
-# In production, HTTPS is handled by reverse proxy
-# So we should trust X-Forwarded-Proto header
+# SameSite=None is required so cookies are sent on cross-site XHR/fetch requests
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
+# Ensure cookies are only sent over HTTPS
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+# Trust the reverse proxy protocol header (Railway terminates TLS)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Distance settings (in kilometers)
