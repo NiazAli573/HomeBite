@@ -59,14 +59,36 @@ const CookSignup = () => {
     setLoading(true);
 
     try {
-      const data = { ...formData };
+      // Map field names for API
+      const signupData = {
+        ...formData,
+        phone: formData.phone_number,
+        kitchen_location_lat: formData.latitude,
+        kitchen_location_lng: formData.longitude,
+      };
+      delete signupData.phone_number;
+      delete signupData.latitude;
+      delete signupData.longitude;
+      
       if (profileImage) {
-        data.profile_image = profileImage;
+        signupData.profile_image = profileImage;
       }
-      await signupCook(data);
-      navigate('/dashboard');
+      
+      const response = await signupCook(signupData);
+      console.log('Cook signup response:', response);
+      
+      // After successful signup, user is automatically logged in
+      // Redirect to dashboard
+      if (response?.user?.role === 'cook') {
+        navigate('/dashboard');
+      } else {
+        navigate('/meals');
+      }
     } catch (err) {
-      setError(err.response?.data?.error || 'Signup failed. Please try again.');
+      console.error('Cook signup error:', err);
+      const errorMessage = err.response?.data?.error || 
+                          (err.response?.data ? JSON.stringify(err.response.data) : 'Signup failed. Please try again.');
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

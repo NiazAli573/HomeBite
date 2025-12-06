@@ -14,10 +14,16 @@ from decimal import Decimal
 @permission_classes([IsAuthenticated])
 def cook_dashboard_stats(request):
     """Get dashboard statistics for cook."""
-    if request.user.role != 'cook' or not hasattr(request.user, 'cook_profile'):
+    if request.user.role != 'cook':
         return Response(
-            {'error': 'Only cooks can access dashboard stats'},
+            {'error': 'Only cooks can access dashboard stats. Your account role is: ' + request.user.role},
             status=status.HTTP_403_FORBIDDEN
+        )
+    
+    if not hasattr(request.user, 'cook_profile'):
+        return Response(
+            {'error': 'Cook profile not found. Please contact support.'},
+            status=status.HTTP_404_NOT_FOUND
         )
     
     cook_profile = request.user.cook_profile
@@ -67,10 +73,16 @@ def cook_dashboard_stats(request):
 @permission_classes([IsAuthenticated])
 def cook_todays_orders(request):
     """Get today's orders for cook, grouped by status."""
-    if request.user.role != 'cook' or not hasattr(request.user, 'cook_profile'):
+    if request.user.role != 'cook':
         return Response(
-            {'error': 'Only cooks can access orders'},
+            {'error': 'Only cooks can access orders. Your account role is: ' + request.user.role},
             status=status.HTTP_403_FORBIDDEN
+        )
+    
+    if not hasattr(request.user, 'cook_profile'):
+        return Response(
+            {'error': 'Cook profile not found. Please contact support.'},
+            status=status.HTTP_404_NOT_FOUND
         )
     
     cook_profile = request.user.cook_profile

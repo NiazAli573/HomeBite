@@ -32,8 +32,14 @@ function EnhancedCookDashboard() {
       setOrders(ordersData);
       setError('');
     } catch (err) {
-      setError('Failed to load dashboard data');
-      console.error(err);
+      console.error('Dashboard error:', err);
+      const errorMessage = err.response?.data?.error || 
+                          err.response?.data?.detail ||
+                          (err.response?.status === 401 ? 'Please log in to access the dashboard' :
+                           err.response?.status === 403 ? 'Only cooks can access this dashboard' :
+                           err.response?.status === 500 ? 'Server error. Please try again later.' :
+                           'Failed to load dashboard data');
+      setError(errorMessage);
     } finally {
       setLoading(false);
       setRefreshing(false);
