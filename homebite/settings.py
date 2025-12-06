@@ -27,7 +27,16 @@ if not SECRET_KEY:
 
 DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,.vercel.app').split(',')
+# ALLOWED_HOSTS: Include all domains that will access this API
+# - localhost/127.0.0.1 for local development
+# - .vercel.app for Vercel frontend deployments
+# - .railway.app for Railway deployments (including proxy)
+# - .up.railway.app for Railway domains
+# - Custom environment variable for flexibility
+ALLOWED_HOSTS = os.environ.get(
+    'ALLOWED_HOSTS',
+    'localhost,127.0.0.1,.vercel.app,.railway.app,.up.railway.app'
+).split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -147,6 +156,7 @@ REST_FRAMEWORK = {
 }
 
 # CORS settings
+# Allow requests from frontend applications
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -154,7 +164,24 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "https://home-bite-13041.vercel.app",
 ]
+# Add any additional CORS origins from environment variables
+if os.environ.get('ADDITIONAL_CORS_ORIGINS'):
+    additional = os.environ.get('ADDITIONAL_CORS_ORIGINS').split(',')
+    CORS_ALLOWED_ORIGINS.extend(additional)
+
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -163,6 +190,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "https://home-bite-13041.vercel.app",
+    "https://*.railway.app",
+    "https://*.up.railway.app",
 ]
 
 # CSRF Cookie settings
