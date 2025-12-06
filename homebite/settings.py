@@ -201,9 +201,18 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # CSRF Cookie settings
+# For cross-origin requests (frontend on Vercel, backend on Railway/Vercel)
+# SameSite=None is required for cookies to be sent in cross-site requests
+# Secure=True is required when SameSite=None (HTTPS only)
 CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
+CSRF_COOKIE_SECURE = not DEBUG  # True in production (HTTPS), False in development
+
+# Session Cookie settings
+# Same configuration as CSRF for consistent cross-origin behavior
+SESSION_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
+SESSION_COOKIE_SECURE = not DEBUG  # True in production (HTTPS), False in development
+SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access to session cookie for security
 
 # Distance settings (in kilometers)
 DEFAULT_SEARCH_RADIUS_KM = 2.0
