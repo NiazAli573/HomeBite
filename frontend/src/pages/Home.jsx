@@ -237,7 +237,7 @@ const Home = () => {
                 color: '#212529',
                 marginBottom: '1.5rem'
               }}>
-                For Office Workers
+                For Office Workers and Hostelites
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {[

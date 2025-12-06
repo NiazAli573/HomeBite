@@ -21,50 +21,27 @@ def cook_dashboard_stats(request):
         )
     
     cook_profile = request.user.cook_profile
+    today = timezone.now().date()
     
-    # Get all active orders (not completed/cancelled)
-    active_orders = Order.objects.filter(
+    # Get today's orders (created today, any status)
+    todays_orders = Order.objects.filter(
         cook=cook_profile,
-        status__in=['pending', 'confirmed', 'ready']
+        created_at__date=today
     )
     
     # Get today's completed orders for today's earnings
-    today = timezone.now().date()
-    todays_completed_orders = Order.objects.filter(
-        cook=cook_profile,
-        status='completed',
-        updated_at__date=today
-    )
+    todays_completed_orders = todays_orders.filter(status='completed')
     
-    # Active stats
-    active_stats = active_orders.aggregate(
-        pending_count=Count('id', filter=Q(status='pending')),
-        confirmed_count=Count('id', filter=Q(status='confirmed')),
-        ready_count=Count('id', filter=Q(status='ready')),
-    )
-    
-    # Today's earnings
-    todays_earnings = todays_completed_orders.aggregate(
-        total_earnings=Sum('total_price')
-    )
-    
-    # Combine stats
+    # Today's stats
     todays_stats = {
-        'total_orders': active_stats['pending_count'] + active_stats['confirmed_count'] + active_stats['ready_count'],
-        'total_earnings': todays_earnings['total_earnings'] or 0,
-        'pending_count': active_stats['pending_count'] or 0,
-        'confirmed_count': active_stats['confirmed_count'] or 0,
-        'ready_count': active_stats['ready_count'] or 0,
+        'total_orders': todays_orders.count(),
+        'total_earnings': float(todays_completed_orders.aggregate(Sum('total_price'))['total_price__sum'] or 0),
+        'pending_count': todays_orders.filter(status='pending').count(),
+        'confirmed_count': todays_orders.filter(status='confirmed').count(),
+        'ready_count': todays_orders.filter(status='ready').count(),
         'completed_count': todays_completed_orders.count(),
-        'cancelled_count': Order.objects.filter(cook=cook_profile, status='cancelled').count(),
+        'cancelled_count': todays_orders.filter(status='cancelled').count(),
     }
-    
-    # Convert None to 0 and Decimal to float
-    for key, value in todays_stats.items():
-        if value is None:
-            todays_stats[key] = 0
-        elif isinstance(value, Decimal):
-            todays_stats[key] = float(value)
     
     # All-time stats
     all_time_stats = {

@@ -2,28 +2,39 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { orderService } from '../services/orderService';
 import { mealService } from '../services/mealService';
+import axios from 'axios';
 
 const CookDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [meals, setMeals] = useState([]);
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     fetchData();
+    
+    // Setup polling to refresh data every 20 seconds
+    const interval = setInterval(() => {
+      fetchData();
+    }, 20000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const fetchData = async () => {
     try {
-      const [ordersData, mealsData] = await Promise.all([
+      const [ordersData, mealsData, statsData] = await Promise.all([
         orderService.getOrders(),
         mealService.getMyMeals(),
+        axios.get('/api/dashboard/cook/stats/')
       ]);
       setOrders(ordersData);
       setMeals(mealsData);
+      setStats(statsData.data);
+      setLoading(false);
     } catch (err) {
       setError('Failed to load dashboard data');
-    } finally {
       setLoading(false);
     }
   };
@@ -31,6 +42,7 @@ const CookDashboard = () => {
   const handleStatusUpdate = async (orderId, newStatus) => {
     try {
       await orderService.updateOrderStatus(orderId, newStatus);
+      // Refresh data immediately after status update
       fetchData();
     } catch (err) {
       alert('Failed to update order status');
@@ -57,13 +69,14 @@ const CookDashboard = () => {
     });
   };
 
-  // Calculate statistics
-  const todayOrders = orders.filter(order => {
-    const today = new Date().toDateString();
-    const orderDate = new Date(order.created_at).toDateString();
-    return today === orderDate;
-  });
-
+  // Get statistics from API or calculate from orders
+  const todayOrdersCount = stats?.today?.total_orders || 0;
+  const todayEarnings = stats?.today?.total_earnings || 0;
+  const pendingCount = stats?.today?.pending_count || 0;
+  const completedCount = stats?.today?.completed_count || 0;
+  const cookRating = stats?.all_time?.rating || 0;
+  const totalRatings = stats?.all_time?.total_ratings || 0;
+  
   const pendingOrders = orders.filter(order => order.status === 'pending');
   const completedOrders = orders.filter(order => order.status === 'completed');
   const totalRevenue = completedOrders.reduce((sum, order) => sum + parseFloat(order.total_price), 0);
@@ -154,7 +167,7 @@ const CookDashboard = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <p style={{ color: '#BDBDBD', fontSize: '0.85rem', fontWeight: '600', textTransform: 'uppercase', margin: 0, marginBottom: '0.5rem' }}>Today's Orders</p>
-                <h2 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#212529', margin: 0 }}>{todayOrders.length}</h2>
+                <h2 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#212529', margin: 0 }}>{todayOrdersCount}</h2>
               </div>
               <i className="bi bi-calendar-check" style={{ fontSize: '2.5rem', color: 'rgba(255,107,53,0.2)' }}></i>
             </div>
@@ -204,10 +217,31 @@ const CookDashboard = () => {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <p style={{ color: '#BDBDBD', fontSize: '0.85rem', fontWeight: '600', textTransform: 'uppercase', margin: 0, marginBottom: '0.5rem' }}>Total Revenue</p>
-                <h2 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#212529', margin: 0 }}>Rs. {totalRevenue.toFixed(0)}</h2>
+                <p style={{ color: '#BDBDBD', fontSize: '0.85rem', fontWeight: '600', textTransform: 'uppercase', margin: 0, marginBottom: '0.5rem' }}>Today's Earnings</p>
+                <h2 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#212529', margin: 0 }}>Rs. {todayEarnings.toFixed(0)}</h2>
               </div>
               <i className="bi bi-cash-stack" style={{ fontSize: '2.5rem', color: 'rgba(23,162,184,0.2)' }}></i>
+            </div>
+          </div>
+
+          {/* Your Rating */}
+          <div style={{
+            background: 'white',
+            borderRadius: '1rem',
+            padding: '1.5rem',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+            borderTop: '4px solid #FF9800'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <p style={{ color: '#BDBDBD', fontSize: '0.85rem', fontWeight: '600', textTransform: 'uppercase', margin: 0, marginBottom: '0.5rem' }}>Your Rating</p>
+                <h2 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#212529', margin: 0 }}>
+                  {cookRating.toFixed(1)}
+                  <span style={{ fontSize: '1.5rem', marginLeft: '0.5rem', color: '#FFD700' }}>★</span>
+                </h2>
+                <small style={{ color: '#BDBDBD' }}>({totalRatings} reviews)</small>
+              </div>
+              <i className="bi bi-star-fill" style={{ fontSize: '2.5rem', color: 'rgba(255,152,0,0.2)' }}></i>
             </div>
           </div>
         </div>
