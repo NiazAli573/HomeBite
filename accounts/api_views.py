@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import authenticate, login, logout
+from django.middleware.csrf import get_token
 from .serializers import UserSerializer, CustomerSignupSerializer, CookSignupSerializer
 
 
@@ -34,6 +35,8 @@ def login_view(request):
     
     if user is not None:
         login(request, user)
+        # Ensure CSRF token is set in the response
+        get_token(request)
         serializer = UserSerializer(user)
         return Response({
             'message': 'Login successful',
@@ -62,6 +65,8 @@ def customer_signup(request):
     if serializer.is_valid():
         user = serializer.save()
         login(request, user)
+        # Ensure CSRF token is set in the response
+        get_token(request)
         user_serializer = UserSerializer(user)
         return Response({
             'message': 'Signup successful',
@@ -78,6 +83,8 @@ def cook_signup(request):
     if serializer.is_valid():
         user = serializer.save()
         login(request, user)
+        # Ensure CSRF token is set in the response
+        get_token(request)
         user_serializer = UserSerializer(user)
         return Response({
             'message': 'Signup successful',
