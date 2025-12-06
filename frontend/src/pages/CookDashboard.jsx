@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { orderService } from '../services/orderService';
 import { mealService } from '../services/mealService';
-import axios from 'axios';
+import { dashboardService } from '../services/dashboardService';
 
 const CookDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -27,13 +27,14 @@ const CookDashboard = () => {
       const [ordersData, mealsData, statsData] = await Promise.all([
         orderService.getOrders(),
         mealService.getMyMeals(),
-        axios.get('/api/dashboard/cook/stats/')
+        dashboardService.getCookStats()
       ]);
       setOrders(ordersData);
       setMeals(mealsData);
-      setStats(statsData.data);
+      setStats(statsData);
       setLoading(false);
     } catch (err) {
+      console.error('Dashboard error:', err);
       setError('Failed to load dashboard data');
       setLoading(false);
     }
