@@ -9,9 +9,10 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id', 'username', 'email', 'first_name', 'last_name',
-            'phone', 'address', 'role', 'is_cook', 'is_approved'
+            'phone', 'address', 'role', 'is_cook', 'is_approved',
+            'is_superuser'
         ]
-        read_only_fields = ['id', 'is_approved']
+        read_only_fields = ['id', 'is_approved', 'is_superuser']
     
     def get_is_cook(self, obj):
         return obj.role == 'cook'
@@ -107,6 +108,9 @@ class CookSignupSerializer(serializers.ModelSerializer):
             role='cook',
             **validated_data
         )
+        # New cooks require admin approval
+        user.is_approved = False
+        user.save(update_fields=['is_approved'])
         
         # Create cook profile
         CookProfile.objects.create(

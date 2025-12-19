@@ -41,6 +41,7 @@ urlpatterns = [
     # API endpoints
     path('api/auth/', include('accounts.api_urls')),
     path('api/dashboard/', include('dashboard.api_urls')),
+    path('api/analytics/', include('analytics.api_urls')),
     path('api/', include(router.urls)),
     # API root
     path('', api_root, name='api_root'),

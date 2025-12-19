@@ -19,6 +19,11 @@ def cook_dashboard_stats(request):
             {'error': 'Only cooks can access dashboard stats. Your account role is: ' + request.user.role},
             status=status.HTTP_403_FORBIDDEN
         )
+    if not request.user.is_approved:
+        return Response(
+            {'error': 'Cook account pending admin approval'},
+            status=status.HTTP_403_FORBIDDEN
+        )
     
     if not hasattr(request.user, 'cook_profile'):
         return Response(
@@ -76,6 +81,11 @@ def cook_todays_orders(request):
     if request.user.role != 'cook':
         return Response(
             {'error': 'Only cooks can access orders. Your account role is: ' + request.user.role},
+            status=status.HTTP_403_FORBIDDEN
+        )
+    if not request.user.is_approved:
+        return Response(
+            {'error': 'Cook account pending admin approval'},
             status=status.HTTP_403_FORBIDDEN
         )
     

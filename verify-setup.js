@@ -72,3 +72,4 @@ console.log('   1. Set VITE_API_URL in Vercel Dashboard');
 console.log(`   2. Value should be: ${BACKEND_API_URL}`);
 console.log('   3. Redeploy Vercel frontend');
 console.log('   4. Test in browser: https://home-bite-13041.vercel.app\n');
+

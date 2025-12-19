@@ -32,6 +32,9 @@ class MealViewSet(viewsets.ModelViewSet):
         if self.request.user.role != 'cook' or not hasattr(self.request.user, 'cook_profile'):
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied('Only cooks can create meals')
+        if not self.request.user.is_approved:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Cook account pending admin approval')
         # Auto-approve and activate meals (no admin approval needed for MVP)
         serializer.save(cook=self.request.user.cook_profile, is_approved=True, is_active=True)
 

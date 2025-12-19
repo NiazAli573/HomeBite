@@ -98,6 +98,19 @@ const Layout = () => {
                         My Orders
                       </Link>
                     )}
+                    {(user.is_superuser || user.role === 'admin') && (
+                      <Link to="/admin/dashboard" style={{
+                        color: '#212529',
+                        textDecoration: 'none',
+                        fontWeight: '500',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseOver={(e) => e.target.style.color = '#FF6B35'}
+                      onMouseOut={(e) => e.target.style.color = '#212529'}>
+                        <i className="bi bi-speedometer2 me-1"></i>
+                        Admin
+                      </Link>
+                    )}
                     <div style={{ position: 'relative' }}>
                       <button
                         style={{

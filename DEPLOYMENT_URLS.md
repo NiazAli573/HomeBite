@@ -57,3 +57,4 @@ Open in browser: `https://home-bite-13041.vercel.app`
    - Open: https://home-bite-13041.vercel.app
    - Check browser console (F12) for errors
    - Try login/signup functionality
+

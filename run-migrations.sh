@@ -15,3 +15,4 @@ echo "🚀 Starting application..."
 
 exec gunicorn homebite.wsgi:application --bind 0.0.0.0:${PORT:-8000}
 
+

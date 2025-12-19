@@ -18,6 +18,7 @@ import OrderDetail from './pages/OrderDetail'
 import CookDashboard from './pages/CookDashboard'
 import EnhancedCookDashboard from './pages/EnhancedCookDashboard'
 import CustomerDashboard from './pages/CustomerDashboard'
+import AdminDashboard from './pages/Admin/AdminDashboard'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -79,6 +80,12 @@ function App() {
             <Route path="customer/dashboard" element={
               <ProtectedRoute>
                 <CustomerDashboard />
+              </ProtectedRoute>
+            } />
+
+            <Route path="admin/dashboard" element={
+              <ProtectedRoute>
+                <AdminDashboard />
               </ProtectedRoute>
             } />
 
