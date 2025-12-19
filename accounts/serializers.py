@@ -108,8 +108,8 @@ class CookSignupSerializer(serializers.ModelSerializer):
             role='cook',
             **validated_data
         )
-        # New cooks require admin approval
-        user.is_approved = False
+        # Auto-approve all cooks for MVP
+        user.is_approved = True
         user.save(update_fields=['is_approved'])
         
         # Create cook profile

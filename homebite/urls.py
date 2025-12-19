@@ -11,13 +11,11 @@ from django.views.generic import TemplateView
 from rest_framework.routers import DefaultRouter
 from meals.api_views import MealViewSet
 from orders.api_views import OrderViewSet
-from ratings.api_views import RatingViewSet
 
 # API Router
 router = DefaultRouter()
 router.register(r'meals', MealViewSet, basename='meal')
 router.register(r'orders', OrderViewSet, basename='order')
-router.register(r'ratings', RatingViewSet, basename='rating')
 
 from django.http import JsonResponse
 

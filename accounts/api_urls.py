@@ -20,8 +20,4 @@ urlpatterns = [
     path('signup/customer/', api_views.customer_signup, name='customer_signup'),
     path('signup/cook/', api_views.cook_signup, name='cook_signup'),
     path('profile/', api_views.profile_view, name='profile'),
-    # Admin cook approval endpoints
-    path('admin/pending-cooks/', api_views.pending_cooks, name='pending_cooks'),
-    path('admin/approve-cook/', api_views.approve_cook, name='approve_cook'),
-    path('admin/disapprove-cook/', api_views.disapprove_cook, name='disapprove_cook'),
 ]

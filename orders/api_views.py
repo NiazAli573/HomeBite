@@ -88,46 +88,6 @@ class OrderViewSet(viewsets.ModelViewSet):
         
         serializer = self.get_serializer(order)
         return Response(serializer.data)
-
-    @action(detail=True, methods=['post'])
-    def confirm(self, request, pk=None):
-        """Confirm an order (cook only)."""
-        order = self.get_object()
-        
-        if not hasattr(request.user, 'cook_profile') or order.cook != request.user.cook_profile:
-            return Response(
-                {'error': 'Only the cook can confirm orders'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
-        if order.confirm():
-            serializer = self.get_serializer(order)
-            return Response(serializer.data)
-        
-        return Response(
-            {'error': 'Order cannot be confirmed in current status'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-    
-    @action(detail=True, methods=['post'])
-    def mark_ready(self, request, pk=None):
-        """Mark order as ready (cook only)."""
-        order = self.get_object()
-        
-        if not hasattr(request.user, 'cook_profile') or order.cook != request.user.cook_profile:
-            return Response(
-                {'error': 'Only the cook can mark orders as ready'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
-        if order.mark_as_ready():
-            serializer = self.get_serializer(order)
-            return Response(serializer.data)
-        
-        return Response(
-            {'error': 'Order cannot be marked as ready in current status'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
     
     @action(detail=True, methods=['post'])
     def complete(self, request, pk=None):
@@ -151,9 +111,9 @@ class OrderViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def active(self, request):
-        """Get active orders (pending, confirmed, ready) for current user."""
+        """Get active orders (pending only) for current user."""
         orders = self.get_queryset().filter(
-            status__in=['pending', 'confirmed', 'ready']
+            status='pending'
         ).order_by('-created_at')
         serializer = self.get_serializer(orders, many=True)
         return Response(serializer.data)

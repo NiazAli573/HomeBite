@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'meals',
     'orders',
     'dashboard',
-    'ratings',
     'analytics',
 ]
 

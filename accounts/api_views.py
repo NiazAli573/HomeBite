@@ -35,12 +35,6 @@ def login_view(request):
     user = authenticate(request, username=username, password=password)
     
     if user is not None:
-        # Block unapproved cooks
-        if user.role == 'cook' and not user.is_approved:
-            return Response(
-                {'error': 'Cook account pending approval by admin'},
-                status=status.HTTP_403_FORBIDDEN
-            )
         login(request, user)
         # Ensure CSRF token is set in the response
         get_token(request)
@@ -89,48 +83,15 @@ def cook_signup(request):
     serializer = CookSignupSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
-        # Do NOT log in unapproved cooks; require admin approval
+        login(request, user)
+        # Ensure CSRF token is set in the response
+        get_token(request)
+        user_serializer = UserSerializer(user)
         return Response({
-            'message': 'Cook signup successful. Awaiting admin approval.',
-            'user': UserSerializer(user).data
+            'message': 'Signup successful',
+            'user': user_serializer.data
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET'])
-@permission_classes([IsAdminUser])
-def pending_cooks(request):
-    """List pending cook accounts for admin review."""
-    pending = User.objects.filter(role='cook', is_approved=False).order_by('-date_joined')
-    return Response(UserSerializer(pending, many=True).data)
-
-
-@api_view(['POST'])
-@permission_classes([IsAdminUser])
-def approve_cook(request):
-    """Approve a cook account."""
-    user_id = request.data.get('user_id')
-    try:
-        user = User.objects.get(id=user_id, role='cook')
-    except User.DoesNotExist:
-        return Response({'error': 'Cook not found'}, status=status.HTTP_404_NOT_FOUND)
-    user.is_approved = True
-    user.save(update_fields=['is_approved'])
-    return Response({'message': 'Cook approved', 'user': UserSerializer(user).data})
-
-
-@api_view(['POST'])
-@permission_classes([IsAdminUser])
-def disapprove_cook(request):
-    """Disapprove / disable a cook account."""
-    user_id = request.data.get('user_id')
-    try:
-        user = User.objects.get(id=user_id, role='cook')
-    except User.DoesNotExist:
-        return Response({'error': 'Cook not found'}, status=status.HTTP_404_NOT_FOUND)
-    user.is_approved = False
-    user.save(update_fields=['is_approved'])
-    return Response({'message': 'Cook disapproved', 'user': UserSerializer(user).data})
 
 
 @api_view(['GET', 'PUT'])

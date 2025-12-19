@@ -9,8 +9,6 @@ class Order(models.Model):
     
     STATUS_CHOICES = [
         ('pending', 'Pending'),
-        ('confirmed', 'Confirmed'),
-        ('ready', 'Ready for Pickup'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
     ]
@@ -68,25 +66,9 @@ class Order(models.Model):
         self.total_price = self.meal.price * self.quantity
         return self.total_price
     
-    def confirm(self):
-        """Cook confirms the order."""
-        if self.status == 'pending':
-            self.status = 'confirmed'
-            self.save()
-            return True
-        return False
-    
-    def mark_as_ready(self):
-        """Mark order as ready for pickup/delivery."""
-        if self.status == 'confirmed':
-            self.status = 'ready'
-            self.save()
-            return True
-        return False
-    
     def mark_as_completed(self):
         """Mark order as completed."""
-        if self.status in ['ready', 'confirmed']:
+        if self.status == 'pending':
             self.status = 'completed'
             self.cook.total_orders += 1
             self.cook.save()
@@ -96,7 +78,7 @@ class Order(models.Model):
     
     def cancel(self):
         """Cancel the order and restore meal quantity."""
-        if self.status in ['pending', 'confirmed']:
+        if self.status == 'pending':
             self.status = 'cancelled'
             # Restore quantity only if it's not a dine-in order
             if self.delivery_type != 'dine_in':
