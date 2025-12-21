@@ -16,7 +16,7 @@ class User(AbstractUser):
     phone = models.CharField(max_length=20, blank=True)
     address = models.TextField(blank=True)
     cnic = models.CharField(max_length=15, blank=True, help_text='CNIC number (optional)')
-    is_approved = models.BooleanField(default=True, help_text='Cook accounts require admin approval')
+    is_approved = models.BooleanField(default=True, help_text='User approval status')
     
     def __str__(self):
         return f"{self.username} ({self.get_role_display()})"

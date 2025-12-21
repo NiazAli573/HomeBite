@@ -9,10 +9,10 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id', 'username', 'email', 'first_name', 'last_name',
-            'phone', 'address', 'role', 'is_cook', 'is_approved',
+            'phone', 'address', 'role', 'is_cook',
             'is_superuser'
         ]
-        read_only_fields = ['id', 'is_approved', 'is_superuser']
+        read_only_fields = ['id', 'is_superuser']
     
     def get_is_cook(self, obj):
         return obj.role == 'cook'
@@ -102,15 +102,13 @@ class CookSignupSerializer(serializers.ModelSerializer):
         kitchen_location_lng = validated_data.pop('kitchen_location_lng', None)
         bio = validated_data.pop('bio', '')
         
-        # Create user
+        # Create user - all cooks are automatically approved on signup
         user = User.objects.create_user(
             password=password,
             role='cook',
+            is_approved=True,
             **validated_data
         )
-        # Auto-approve all cooks for MVP
-        user.is_approved = True
-        user.save(update_fields=['is_approved'])
         
         # Create cook profile
         CookProfile.objects.create(

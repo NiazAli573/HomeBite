@@ -24,27 +24,7 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
     
-    actions = ['approve_users', 'reject_users', 'disable_users', 'enable_users']
-    
-    @admin.action(description='Approve selected users')
-    def approve_users(self, request, queryset):
-        updated = queryset.filter(role='cook').update(is_approved=True)
-        self.message_user(request, f'{updated} cook(s) approved.')
-    
-    @admin.action(description='Reject selected users (set is_approved=False)')
-    def reject_users(self, request, queryset):
-        """Reject cooks and deactivate their meals."""
-        from meals.models import Meal
-        
-        cook_users = queryset.filter(role='cook')
-        for user in cook_users:
-            user.is_approved = False
-            user.save()
-            # Deactivate all meals by this cook
-            if hasattr(user, 'cook_profile'):
-                Meal.objects.filter(cook=user.cook_profile).update(is_active=False)
-        
-        self.message_user(request, f'{cook_users.count()} cook(s) rejected and their meals deactivated.')
+    actions = ['disable_users', 'enable_users']
     
     @admin.action(description='Disable selected users')
     def disable_users(self, request, queryset):
