@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from django.contrib.auth import authenticate, login, logout
 from django.middleware.csrf import get_token
+from django.views.decorators.csrf import csrf_exempt
 from .serializers import UserSerializer, CustomerSignupSerializer, CookSignupSerializer
 from .models import User
 
@@ -19,6 +20,7 @@ def current_user(request):
         return Response({'user': None}, status=status.HTTP_200_OK)
 
 
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_view(request):
@@ -50,6 +52,7 @@ def login_view(request):
         )
 
 
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def logout_view(request):
@@ -58,6 +61,7 @@ def logout_view(request):
     return Response({'message': 'Logout successful'})
 
 
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def customer_signup(request):
@@ -66,8 +70,6 @@ def customer_signup(request):
     if serializer.is_valid():
         user = serializer.save()
         login(request, user)
-        # Ensure CSRF token is set in the response
-        get_token(request)
         user_serializer = UserSerializer(user)
         return Response({
             'message': 'Signup successful',
@@ -76,6 +78,7 @@ def customer_signup(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def cook_signup(request):
@@ -84,8 +87,6 @@ def cook_signup(request):
     if serializer.is_valid():
         user = serializer.save()
         login(request, user)
-        # Ensure CSRF token is set in the response
-        get_token(request)
         user_serializer = UserSerializer(user)
         return Response({
             'message': 'Signup successful',
@@ -94,6 +95,7 @@ def cook_signup(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@csrf_exempt
 @api_view(['GET', 'PUT'])
 @permission_classes([IsAuthenticated])
 def profile_view(request):

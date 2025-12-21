@@ -152,7 +152,10 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        # Use custom session auth that doesn't enforce CSRF
+        # CSRF is not usable for cross-origin requests (Vercel -> Railway)
+        # Security is provided by CORS configuration instead
+        'homebite.middleware.CsrfExemptSessionAuthentication',
     ],
 }
 
