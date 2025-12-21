@@ -34,10 +34,9 @@ class CookSignupView(CreateView):
     
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.info(
+        messages.success(
             self.request,
-            'Account created! Your account is pending admin approval. '
-            'You will be able to login once approved.'
+            'Account created successfully! You can now login and start adding meals.'
         )
         return response
 
@@ -49,16 +48,7 @@ class CustomLoginView(LoginView):
     form_class = LoginForm
     
     def form_valid(self, form):
-        user = form.get_user()
-        
-        # Check if cook is approved
-        if user.role == 'cook' and not user.is_approved:
-            messages.error(
-                self.request,
-                'Your account is pending admin approval. Please wait for approval.'
-            )
-            return self.form_invalid(form)
-        
+        # No admin approval required - all users can login immediately
         return super().form_valid(form)
     
     def get_success_url(self):

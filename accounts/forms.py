@@ -84,7 +84,7 @@ class CookSignupForm(UserCreationForm):
         user.phone = self.cleaned_data['phone']
         user.address = self.cleaned_data['address']
         user.cnic = self.cleaned_data.get('cnic', '')
-        user.is_approved = False  # Cooks need admin approval
+        user.is_approved = True  # Auto-approve cooks - no admin approval needed
         if commit:
             user.save()
             # Create cook profile
